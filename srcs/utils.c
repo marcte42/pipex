@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:25:10 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 19:30:16 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 20:54:47 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_split(char **split)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (split[++i])
@@ -25,7 +25,7 @@ void	free_split(char **split)
 void	free_data(t_data *data)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = -1;
 	while (data->cmds[++i])

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pravry <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/07 14:26:31 by pravry            #+#    #+#             */
-/*   Updated: 2019/12/08 17:53:28 by pravry           ###   ########.fr       */
+/*   Updated: 2021/12/19 20:58:12 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	ft_size_itoa(int n)
 	return (size);
 }
 
-char		*ft_itoa(int n)
+char	*ft_itoa(int n)
 {
 	char			*res;
 	int				i;

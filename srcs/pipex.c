@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 20:17:23 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 20:54:24 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	exec_path(t_data *data, char *argv[])
 {
-	(void) data;
+	(void)	data;
 	char	**paths;
 	char	*path_to_bin;
 	char	*tmp;
@@ -35,11 +35,12 @@ void	exec_path(t_data *data, char *argv[])
 	}
 }
 
-int exec_left(t_data *data, int *pid, int *pipefd)
+int	exec_left(t_data *data, int *pid, int *pipefd)
 {
-	int fd;
-	
-	if ((fd = valid_in(data)) > 0)
+	int	fd;
+
+	fd = valid_in(data);
+	if (fd > 0)
 	{
 		if (valid_cmd(data, data->cmds[0][0]))
 		{
@@ -66,11 +67,12 @@ int exec_left(t_data *data, int *pid, int *pipefd)
 	return (0);
 }
 
-int exec_right(t_data *data, int *pid, int *pipefd)
+int	exec_right(t_data *data, int *pid, int *pipefd)
 {
-	int fd;
-	
-	if ((fd = valid_out(data)) > 0)
+	int	fd;
+
+	fd = valid_out(data);
+	if (fd > 0)
 	{
 		if (valid_cmd(data, data->cmds[1][0]))
 		{
@@ -99,9 +101,9 @@ int exec_right(t_data *data, int *pid, int *pipefd)
 
 int	execute(t_data *data)
 {
-	int pipefd[2];
-	int pid[2];
-	int status[2];
+	int	pipefd[2];
+	int	pid[2];
+	int	status[2];
 
 	pipe(pipefd);
 	status[0] = exec_left(data, pid, pipefd);
@@ -113,11 +115,11 @@ int	execute(t_data *data)
 	return (status[1]);
 }
 
-int main(int argc, char *argv[], char *envp[])
+int	main(int argc, char *argv[], char *envp[])
 {
 	t_data	data;
 	int		status;
-	
+
 	if (argc != 5)
 	{
 		ft_putstr("Error : invalid number of arguments\n");

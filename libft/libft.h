@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 12:23:04 by pravry            #+#    #+#             */
-/*   Updated: 2021/12/19 10:23:08 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 21:06:07 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ size_t				ft_strlcat(char *dst, const char *src, size_t size);
 size_t				ft_strlen(const char *s);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 char				*ft_strnstr(const char *haytack, const char *needle,
-	size_t len);
+						size_t len);
 int					ft_tolower(int c);
 int					ft_strisnum(const char *str);
 int					ft_toupper(int c);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pravry <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 16:36:48 by pravry            #+#    #+#             */
-/*   Updated: 2019/12/15 16:45:06 by pravry           ###   ########.fr       */
+/*   Updated: 2021/12/19 20:59:39 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	ft_free(int i, char **result)
 static int	ft_size_malloc(char *s, char c)
 {
 	int	i;
-	int count;
+	int	count;
 
 	count = 0;
 	i = 0;
