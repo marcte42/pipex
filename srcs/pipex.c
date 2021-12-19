@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 18:14:54 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 18:48:24 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	execute(t_data *data)
 	if (valid_in(data))
 	{
 		pid[0] = fork();
-		if (pid == 0)
+		if (pid[0] == 0)
 		{
 			close(pipefd[0]);
 			fd = open(data->in, O_RDONLY);
@@ -106,7 +106,7 @@ int	execute(t_data *data)
 	if (valid_out(data))
 	{
 		pid[1] = fork();
-		if (pid == 0)
+		if (pid[1] == 0)
 		{
 			close(pipefd[1]);
 			fd = open(data->out, O_WRONLY | O_CREAT, 0666);
