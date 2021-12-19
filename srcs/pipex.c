@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 20:54:24 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 23:20:32 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void	exec_path(t_data *data, char *argv[])
 {
-	(void)	data;
 	char	**paths;
 	char	*path_to_bin;
 	char	*tmp;
 	int		i;
 
+	(void) data;
 	if (open(argv[0], O_RDONLY) > 0)
 		execve(argv[0], argv, NULL);
 	paths = ft_split(getenv("PATH"), ':');
@@ -40,29 +40,23 @@ int	exec_left(t_data *data, int *pid, int *pipefd)
 	int	fd;
 
 	fd = valid_in(data);
-	if (fd > 0)
-	{
-		if (valid_cmd(data, data->cmds[0][0]))
-		{
-			pid[0] = fork();
-			if (pid[0] == 0)
-			{
-				close(pipefd[0]);
-				dup2(fd, STDIN_FILENO);
-				dup2(pipefd[1], STDOUT_FILENO);
-				exec_path(data, data->cmds[0]);
-			}
-		}
-		else
-		{
-			ft_putstr("bash: Command not found\n");
-			return (127);
-		}
-	}
-	else
+	if (fd <= 0)
 	{
 		perror("bash");
 		return (1);
+	}
+	if (!valid_cmd(data, data->cmds[0][0]))
+	{
+		ft_putstr("bash: Command not found\n");
+		return (127);
+	}
+	pid[0] = fork();
+	if (pid[0] == 0)
+	{
+		close(pipefd[0]);
+		dup2(fd, STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		exec_path(data, data->cmds[0]);
 	}
 	return (0);
 }
@@ -72,29 +66,23 @@ int	exec_right(t_data *data, int *pid, int *pipefd)
 	int	fd;
 
 	fd = valid_out(data);
-	if (fd > 0)
-	{
-		if (valid_cmd(data, data->cmds[1][0]))
-		{
-			pid[1] = fork();
-			if (pid[1] == 0)
-			{
-				close(pipefd[1]);
-				dup2(fd, STDOUT_FILENO);
-				dup2(pipefd[0], STDIN_FILENO);
-				exec_path(data, data->cmds[1]);
-			}
-		}
-		else
-		{
-			ft_putstr("bash: Command not found\n");
-			return (127);
-		}
-	}
-	else
+	if (fd <= 0)
 	{
 		perror("bash");
 		return (1);
+	}
+	if (!valid_cmd(data, data->cmds[1][0]))
+	{
+		ft_putstr("bash: Command not found\n");
+		return (127);
+	}
+	pid[1] = fork();
+	if (pid[1] == 0)
+	{
+		close(pipefd[1]);
+		dup2(fd, STDOUT_FILENO);
+		dup2(pipefd[0], STDIN_FILENO);
+		exec_path(data, data->cmds[1]);
 	}
 	return (0);
 }

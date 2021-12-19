@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:24:15 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 20:50:56 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 23:11:46 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,19 @@ int	valid_in(t_data *data)
 int	valid_out(t_data *data)
 {
 	if (access(data->out, F_OK) == 0 && (access(data->out, W_OK) == -1
-											|| is_dir(data->out)))
+			|| is_dir(data->out)))
 		return (-1);
 	return (open(data->out, O_WRONLY | O_CREAT | O_TRUNC, 0666));
 }
 
 int	valid_cmd(t_data *data, char *cmd)
 {
-	(void) data;
 	char	**paths;
 	char	*path_to_bin;
 	char	*tmp;
 	int		i;
 
+	(void) data;
 	if (open(cmd, O_RDONLY) > 0)
 		return (1);
 	paths = ft_split(getenv("PATH"), ':');
