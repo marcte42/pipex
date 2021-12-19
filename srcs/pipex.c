@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 17:41:32 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 18:05:28 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,24 @@ int	is_dir(char *path)
 	return (0);
 }
 
-int	get_redirects(t_data *data, char *argv[])
+int	valid_in(t_data *data)
 {
-	data->in = argv[1];
-	data->out = argv[4];
-	if (access(data->out, F_OK) == 0 && (access(data->out, W_OK) == -1 
-											|| is_dir(data->out)))
-		return (0);
 	return (access(data->in, F_OK | R_OK) == 0);
 }
 
-int	get_commands(t_data *data, char *argv[])
+int	valid_out(t_data *data)
 {
+	if (access(data->out, F_OK) == 0 && (access(data->out, W_OK) == -1 
+											|| is_dir(data->out)))
+		return (0);
+	return (1);
+}
+
+int	init_data(t_data *data, char *argv[], char *envp[])
+{
+	data->envp = envp;
+	data->in = argv[1];
+	data->out = argv[4];
 	data->cmds = calloc(3, sizeof(char *));
 	data->cmds[0] = ft_split(argv[2], ' ');
 	data->cmds[1] = ft_split(argv[3], ' ');
@@ -77,27 +83,41 @@ int	execute(t_data *data)
 
 	pipe(pipefd);
 	
-	pid = fork();
-	if (pid == 0)
+	if (valid_in(data))
 	{
-		close(pipefd[0]);
-		fd = open(data->in, O_RDONLY);
-		if (fd < 0)
-			perror("error");
-		dup2(fd, STDIN_FILENO);
-		dup2(pipefd[1], STDOUT_FILENO);
-		exec_path(data, data->cmds[0]);
+		pid = fork();
+		if (pid == 0)
+		{
+			close(pipefd[0]);
+			fd = open(data->in, O_RDONLY);
+			if (fd < 0)
+				perror("error");
+			dup2(fd, STDIN_FILENO);
+			dup2(pipefd[1], STDOUT_FILENO);
+			exec_path(data, data->cmds[0]);
+		}
 	}
-	pid = fork();
-	if (pid == 0)
+	else
 	{
-		close(pipefd[1]);
-		fd = open(data->out, O_WRONLY | O_CREAT, 0666);
-		if (fd < 0)
-			perror("error");
-		dup2(fd, STDOUT_FILENO);
-		dup2(pipefd[0], STDIN_FILENO);
-		exec_path(data, data->cmds[1]);
+		perror("bash");
+	}
+	if (valid_out(data))
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			close(pipefd[1]);
+			fd = open(data->out, O_WRONLY | O_CREAT, 0666);
+			if (fd < 0)
+				perror("error");
+			dup2(fd, STDOUT_FILENO);
+			dup2(pipefd[0], STDIN_FILENO);
+			exec_path(data, data->cmds[1]);
+		}
+	}
+	else
+	{
+		perror("bash");
 	}
 	close(pipefd[0]);
 	close(pipefd[1]);
@@ -133,17 +153,11 @@ int main(int argc, char *argv[], char *envp[])
 		ft_putstr("Error : invalid number of arguments\n");
 		return (1);
 	}
-	if (!get_redirects(&data, argv))
-	{
-		perror("bash");
-		return (-1);
-	}
-	if (!get_commands(&data, argv))
+	if (!init_data(&data, argv, envp))
 	{
 		perror("error");
 		return (-1);
 	}
-	data.envp = envp;
 	execute(&data);
 	free_data(&data);
 	return 0;
