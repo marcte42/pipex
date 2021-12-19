@@ -6,7 +6,7 @@
 #    By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/17 10:25:07 by mterkhoy          #+#    #+#              #
-#    Updated: 2021/12/19 10:21:57 by mterkhoy         ###   ########.fr        #
+#    Updated: 2021/12/19 19:31:44 by mterkhoy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,10 @@ CFLAGS = -g -Wall -Wextra -Werror
 INC_DIR = ./includes
 LIB_DIR = ./libft
 
-SRCS =		pipex.c
-
+SRCS =		pipex.c	\
+			validation.c	\
+			utils.c 	\
+			
 OBJS = $(addprefix srcs/, $(SRCS:.c=.o))
 
 .c.o:
