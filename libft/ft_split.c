@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 16:36:48 by pravry            #+#    #+#             */
-/*   Updated: 2021/12/19 20:59:39 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 23:02:40 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ static char	*ft_line(char *s, char c)
 	i = 0;
 	while (s[i] != c && s[i])
 		i++;
-	if (!(line = (char *)malloc(sizeof(char) * (i + 1))))
+	line = (char *)malloc(sizeof(char) * (i + 1));
+	if (!line)
 		return (NULL);
 	i = 0;
 	while (s[i] != c && s[i])
@@ -58,13 +59,13 @@ static char	*ft_line(char *s, char c)
 	return (line);
 }
 
-char		**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	char	**result;
 	int		i;
 
-	if (!(result = (char **)malloc(sizeof(char *) *
-	(ft_size_malloc((char *)s, c) + 1))))
+	result = malloc(sizeof(char *) * (ft_size_malloc((char *)s, c) + 1));
+	if (!result)
 		return (NULL);
 	i = 0;
 	while (*s)
@@ -73,7 +74,8 @@ char		**ft_split(char const *s, char c)
 			s++;
 		if (*s && *s != c)
 		{
-			if ((result[i++] = ft_line((char *)s, c)) == NULL)
+			result[i++] = ft_line((char *)s, c);
+			if (result[i - 1] == NULL)
 			{
 				ft_free(i - 1, result);
 				return (NULL);
