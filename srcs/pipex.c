@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 18:48:24 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 19:11:08 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void	exec_path(t_data *data, char *argv[])
 			execve(path_to_bin, argv, NULL);
 		free(path_to_bin);
 	}
-	write (1, "Command not found\n", 18);
-	exit(127);
 }
 
 int	is_dir(char *path)
@@ -52,15 +50,41 @@ int	is_dir(char *path)
 
 int	valid_in(t_data *data)
 {
-	return (access(data->in, F_OK | R_OK) == 0);
+	if (access(data->in, F_OK | R_OK) == -1)
+		return (-1);
+	return (open(data->in, O_RDONLY));
 }
 
 int	valid_out(t_data *data)
 {
 	if (access(data->out, F_OK) == 0 && (access(data->out, W_OK) == -1 
 											|| is_dir(data->out)))
-		return (0);
-	return (1);
+		return (-1);
+	return (open(data->out, O_WRONLY | O_CREAT | O_TRUNC, 0666));
+}
+
+int	valid_cmd(t_data *data, char *cmd)
+{
+	(void) data;
+	char	**paths;
+	char	*path_to_bin;
+	char	*tmp;
+	int		i;
+
+	if (open(cmd, O_RDONLY) > 0)
+		return (1);
+	paths = ft_split(getenv("PATH"), ':');
+	i = -1;
+	while (paths[++i])
+	{
+		tmp = ft_strjoin(paths[i], "/");
+		path_to_bin = ft_strjoin(tmp, cmd);
+		free(tmp);
+		if (open(path_to_bin, O_RDONLY) > 0)
+			return (1);
+		free(path_to_bin);
+	}
+	return (0);
 }
 
 int	init_data(t_data *data, char *argv[], char *envp[])
@@ -84,18 +108,23 @@ int	execute(t_data *data)
 
 	pipe(pipefd);
 	
-	if (valid_in(data))
+	if ((fd = valid_in(data)) > 0)
 	{
-		pid[0] = fork();
-		if (pid[0] == 0)
+		if (valid_cmd(data, data->cmds[0][0]))
 		{
-			close(pipefd[0]);
-			fd = open(data->in, O_RDONLY);
-			if (fd < 0)
-				perror("error");
-			dup2(fd, STDIN_FILENO);
-			dup2(pipefd[1], STDOUT_FILENO);
-			exec_path(data, data->cmds[0]);
+			pid[0] = fork();
+			if (pid[0] == 0)
+			{
+				close(pipefd[0]);
+				dup2(fd, STDIN_FILENO);
+				dup2(pipefd[1], STDOUT_FILENO);
+				exec_path(data, data->cmds[0]);
+			}
+		}
+		else
+		{
+			status[0] = 127;
+			perror("bash : 1");
 		}
 	}
 	else
@@ -103,18 +132,23 @@ int	execute(t_data *data)
 		status[0] = 1;
 		perror("bash");
 	}
-	if (valid_out(data))
+	if ((fd = valid_out(data)) > 0)
 	{
-		pid[1] = fork();
-		if (pid[1] == 0)
+		if (valid_cmd(data, data->cmds[1][0]))
 		{
-			close(pipefd[1]);
-			fd = open(data->out, O_WRONLY | O_CREAT, 0666);
-			if (fd < 0)
-				perror("error");
-			dup2(fd, STDOUT_FILENO);
-			dup2(pipefd[0], STDIN_FILENO);
-			exec_path(data, data->cmds[1]);
+			pid[1] = fork();
+			if (pid[1] == 0)
+			{
+				close(pipefd[1]);
+				dup2(fd, STDOUT_FILENO);
+				dup2(pipefd[0], STDIN_FILENO);
+				exec_path(data, data->cmds[1]);
+			}
+		}
+		else
+		{
+			status[1] = 127;
+			perror("bash : 2");
 		}
 	}
 	else
