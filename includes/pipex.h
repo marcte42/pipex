@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 12:27:18 by pravry            #+#    #+#             */
-/*   Updated: 2021/12/19 10:22:30 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 16:39:59 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
+# include <errno.h>
 
 typedef struct 	s_data 
 {
-	const char	*in;
-	const char	*out;
-	char		***cmds;
+	char	*in;
+	char	*out;
+	char	***cmds;
+	char	**envp;
 }				t_data;
 
 #endif

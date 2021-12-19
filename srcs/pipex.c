@@ -6,77 +6,125 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 12:24:36 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 17:41:32 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-int	get_redirects(t_data *data, const char **argv)
+void	exec_path(t_data *data, char *argv[])
 {
-	int in;
-	int out;
+	(void) data;
+	char	**paths;
+	char	*path_to_bin;
+	char	*tmp;
+	int		i;
 
-	data->in = argv[1];
-	data->out = argv[4];
-	in = access(data->in, F_OK | R_OK) == 0 && open(data->in, O_RDWR) != -1;
-	out = access(data->out, F_OK | W_OK) == 0 && open(data->out, O_RDWR) != -1;
-	return (in && out);
+	if (open(argv[0], O_RDONLY) > 0)
+		execve(argv[0], argv, NULL);
+	paths = ft_split(getenv("PATH"), ':');
+	i = -1;
+	while (paths[++i])
+	{
+		tmp = ft_strjoin(paths[i], "/");
+		path_to_bin = ft_strjoin(tmp, argv[0]);
+		free(tmp);
+		if (open(path_to_bin, O_RDONLY) > 0)
+			execve(path_to_bin, argv, NULL);
+		free(path_to_bin);
+	}
+	write (1, "Command not found\n", 18);
+	exit(127);
 }
 
-int	get_commands(t_data *data, int argc, const char **argv)
+int	is_dir(char *path)
 {
-	int i;
+	int fd;
 
-	data->cmds = calloc(5, sizeof(char *));
-	i = 0;
-	while (++i < argc)
-	{
-		data->cmds[i - 1] = ft_split(argv[i], ' ');
-		if (data->cmds[i - 1] == NULL)
-			return (0);
-	}
+	errno = 0;
+	fd = open(path, O_WRONLY);
+	if (errno == EISDIR)
+		return (1);
+	if (fd > 0)
+		close(fd);
+	return (0);
+}
+
+int	get_redirects(t_data *data, char *argv[])
+{
+	data->in = argv[1];
+	data->out = argv[4];
+	if (access(data->out, F_OK) == 0 && (access(data->out, W_OK) == -1 
+											|| is_dir(data->out)))
+		return (0);
+	return (access(data->in, F_OK | R_OK) == 0);
+}
+
+int	get_commands(t_data *data, char *argv[])
+{
+	data->cmds = calloc(3, sizeof(char *));
+	data->cmds[0] = ft_split(argv[2], ' ');
+	data->cmds[1] = ft_split(argv[3], ' ');
+	data->cmds[2] = NULL;
 	return (1);
 }
 
 int	execute(t_data *data)
 {
-	int pipedes[2];
+	int pipefd[2];
 	int pid;
-	int i;
 	int fd;
 
-	pipe(pipedes);
-	i = -1;
-	while (++i < 2)
-	{
-		pid = fork();
-		if (pid == 0)
-		{
-			if (i == 0)
-			{
-				fd = open(data->in, O_WRONLY);
-				dup2(fd, STDIN_FILENO);
-			}
-			else
-			{
-				fd = open(data->out, O_WRONLY | O_TRUNC | O_CREAT);
-				dup2(fd, STDOUT_FILENO);
-			}
-			close(pipedes[0]);
-			close(pipedes[1]);
-			execve("/bin/cat", data->cmds[i], NULL);
-		}
-		close(pipedes[0]);
-		close(pipedes[1]);
-		wait(NULL);
-	}
+	pipe(pipefd);
 	
-
+	pid = fork();
+	if (pid == 0)
+	{
+		close(pipefd[0]);
+		fd = open(data->in, O_RDONLY);
+		if (fd < 0)
+			perror("error");
+		dup2(fd, STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		exec_path(data, data->cmds[0]);
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		close(pipefd[1]);
+		fd = open(data->out, O_WRONLY | O_CREAT, 0666);
+		if (fd < 0)
+			perror("error");
+		dup2(fd, STDOUT_FILENO);
+		dup2(pipefd[0], STDIN_FILENO);
+		exec_path(data, data->cmds[1]);
+	}
+	close(pipefd[0]);
+	close(pipefd[1]);
+	wait(NULL);
+	wait(NULL);
 	return (0);
 }
 
-int main(int argc, char const *argv[])
+void	free_data(t_data *data)
+{
+	int	i;
+	int j;
+
+	i = -1;
+	while (data->cmds[++i])
+	{
+		j = -1;
+		while (data->cmds[i][++j])
+		{
+			free(data->cmds[i][j]);
+		}
+		free(data->cmds[i]);
+	}
+	free(data->cmds);
+}
+
+int main(int argc, char *argv[], char *envp[])
 {
 	t_data	data;
 	
@@ -87,14 +135,16 @@ int main(int argc, char const *argv[])
 	}
 	if (!get_redirects(&data, argv))
 	{
-		perror("error");
+		perror("bash");
 		return (-1);
 	}
-	if (!get_commands(&data, argc, argv))
+	if (!get_commands(&data, argv))
 	{
 		perror("error");
 		return (-1);
 	}
+	data.envp = envp;
 	execute(&data);
+	free_data(&data);
 	return 0;
 }
