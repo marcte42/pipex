@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 18:05:28 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 18:14:54 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,14 +78,15 @@ int	init_data(t_data *data, char *argv[], char *envp[])
 int	execute(t_data *data)
 {
 	int pipefd[2];
-	int pid;
+	int pid[2];
+	int status[2];
 	int fd;
 
 	pipe(pipefd);
 	
 	if (valid_in(data))
 	{
-		pid = fork();
+		pid[0] = fork();
 		if (pid == 0)
 		{
 			close(pipefd[0]);
@@ -99,11 +100,12 @@ int	execute(t_data *data)
 	}
 	else
 	{
+		status[0] = 1;
 		perror("bash");
 	}
 	if (valid_out(data))
 	{
-		pid = fork();
+		pid[1] = fork();
 		if (pid == 0)
 		{
 			close(pipefd[1]);
@@ -117,13 +119,14 @@ int	execute(t_data *data)
 	}
 	else
 	{
+		status[1] = 1;
 		perror("bash");
 	}
 	close(pipefd[0]);
 	close(pipefd[1]);
-	wait(NULL);
-	wait(NULL);
-	return (0);
+	wait(&status[0]);
+	wait(&status[1]);
+	return (status[1]);
 }
 
 void	free_data(t_data *data)
@@ -147,6 +150,7 @@ void	free_data(t_data *data)
 int main(int argc, char *argv[], char *envp[])
 {
 	t_data	data;
+	int		status;
 	
 	if (argc != 5)
 	{
@@ -158,7 +162,7 @@ int main(int argc, char *argv[], char *envp[])
 		perror("error");
 		return (-1);
 	}
-	execute(&data);
+	status = execute(&data);
 	free_data(&data);
-	return 0;
+	return (status);
 }
