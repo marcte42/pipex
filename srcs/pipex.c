@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 19:37:27 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 20:17:23 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int exec_left(t_data *data, int *pid, int *pipefd)
 		}
 		else
 		{
-			perror("bash");
+			ft_putstr("bash: Command not found\n");
 			return (127);
 		}
 	}
@@ -85,7 +85,7 @@ int exec_right(t_data *data, int *pid, int *pipefd)
 		}
 		else
 		{
-			perror("bash");
+			ft_putstr("bash: Command not found\n");
 			return (127);
 		}
 	}
@@ -104,10 +104,8 @@ int	execute(t_data *data)
 	int status[2];
 
 	pipe(pipefd);
-	
 	status[0] = exec_left(data, pid, pipefd);
 	status[1] = exec_right(data, pid, pipefd);
-	
 	close(pipefd[0]);
 	close(pipefd[1]);
 	wait(&status[0]);
