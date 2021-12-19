@@ -6,11 +6,21 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 19:11:08 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/19 19:22:02 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
+
+void	free_split(char **split)
+{
+	int i;
+
+	i = -1;
+	while (split[++i])
+		free(split[i]);
+	free(split);
+}
 
 void	exec_path(t_data *data, char *argv[])
 {
@@ -81,9 +91,14 @@ int	valid_cmd(t_data *data, char *cmd)
 		path_to_bin = ft_strjoin(tmp, cmd);
 		free(tmp);
 		if (open(path_to_bin, O_RDONLY) > 0)
+		{
+			free(path_to_bin);
+			free_split(paths);
 			return (1);
+		}
 		free(path_to_bin);
 	}
+	free_split(paths);
 	return (0);
 }
 
