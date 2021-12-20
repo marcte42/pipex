@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 13:29:19 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 13:51:42 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,8 @@ int	execute(t_data *data)
 	status[1] = exec_right(data, pid, pipefd);
 	close(pipefd[0]);
 	close(pipefd[1]);
-	wait(&status[0]);
-	wait(&status[1]);
-	printf("%d %d\n", status[0], status[1]);
+	waitpid(pid[0], &status[0], 0);
+	waitpid(pid[1], &status[1], 0);
 	return (status[1]);
 }
 
