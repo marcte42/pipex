@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 23:20:32 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 13:29:19 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	exec_path(t_data *data, char *argv[])
 		path_to_bin = ft_strjoin(tmp, argv[0]);
 		free(tmp);
 		if (open(path_to_bin, O_RDONLY) > 0)
-			execve(path_to_bin, argv, NULL);
+			execve(path_to_bin, argv, data->envp);
 		free(path_to_bin);
 	}
 }
@@ -51,6 +51,8 @@ int	exec_left(t_data *data, int *pid, int *pipefd)
 		return (127);
 	}
 	pid[0] = fork();
+	if (pid[0] == -1)
+		return (errno);
 	if (pid[0] == 0)
 	{
 		close(pipefd[0]);
@@ -77,6 +79,8 @@ int	exec_right(t_data *data, int *pid, int *pipefd)
 		return (127);
 	}
 	pid[1] = fork();
+	if (pid[1] == -1)
+		return (errno);
 	if (pid[1] == 0)
 	{
 		close(pipefd[1]);
@@ -93,13 +97,15 @@ int	execute(t_data *data)
 	int	pid[2];
 	int	status[2];
 
-	pipe(pipefd);
+	if (pipe(pipefd) == -1)
+		return (errno);
 	status[0] = exec_left(data, pid, pipefd);
 	status[1] = exec_right(data, pid, pipefd);
 	close(pipefd[0]);
 	close(pipefd[1]);
 	wait(&status[0]);
 	wait(&status[1]);
+	printf("%d %d\n", status[0], status[1]);
 	return (status[1]);
 }
 
