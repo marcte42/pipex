@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 16:19:39 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 16:34:26 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	exec_left(t_data *data, int *pid, int *pipefd)
 	fd = valid_in(data);
 	if (fd <= 0)
 	{
-		perror("bash");
+		perror(data->in);
 		return (1);
 	}
 	if (!valid_cmd(data, data->cmds[0][0]))
@@ -77,7 +77,7 @@ int	exec_right(t_data *data, int *pid, int *pipefd)
 	fd = valid_out(data);
 	if (fd <= 0)
 	{
-		perror("bash");
+		perror(data->out);
 		return (1);
 	}
 	if (!valid_cmd(data, data->cmds[1][0]))
