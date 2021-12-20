@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 13:51:42 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 14:14:18 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,13 @@ void	exec_path(t_data *data, char *argv[])
 		path_to_bin = ft_strjoin(tmp, argv[0]);
 		free(tmp);
 		if (open(path_to_bin, O_RDONLY) > 0)
+		{
+			free_split(paths);
 			execve(path_to_bin, argv, data->envp);
+		}
 		free(path_to_bin);
 	}
+	free_split(paths);
 }
 
 int	exec_left(t_data *data, int *pid, int *pipefd)
@@ -47,7 +51,8 @@ int	exec_left(t_data *data, int *pid, int *pipefd)
 	}
 	if (!valid_cmd(data, data->cmds[0][0]))
 	{
-		ft_putstr("bash: Command not found\n");
+		ft_putstr(data->cmds[0][0]);
+		ft_putstr(": command not found\n");
 		return (127);
 	}
 	pid[0] = fork();
@@ -75,7 +80,8 @@ int	exec_right(t_data *data, int *pid, int *pipefd)
 	}
 	if (!valid_cmd(data, data->cmds[1][0]))
 	{
-		ft_putstr("bash: Command not found\n");
+		ft_putstr(data->cmds[1][0]);
+		ft_putstr(" : command not found\n");
 		return (127);
 	}
 	pid[1] = fork();
