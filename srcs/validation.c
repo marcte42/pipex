@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:24:15 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/19 23:11:46 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:59:38 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	valid_cmd(t_data *data, char *cmd)
 		tmp = ft_strjoin(paths[i], "/");
 		path_to_bin = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (open(path_to_bin, O_RDONLY) > 0)
+		if (access(path_to_bin, F_OK | X_OK) == 0)
 		{
 			free(path_to_bin);
 			free_split(paths);
