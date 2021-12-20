@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:24:15 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 16:19:35 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 16:26:50 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,9 @@ int	valid_cmd(t_data *data, char *cmd)
 	char	*tmp;
 	int		i;
 
-	(void) data;
 	if (access(cmd, F_OK | X_OK) == 0 && !is_dir(cmd))
 		return (1);
-	paths = ft_split(getenv("PATH"), ':');
+	paths = ft_split(ft_getpath(data->envp), ':');
 	i = -1;
 	while (paths[++i])
 	{
