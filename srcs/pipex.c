@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 15:50:17 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:56:24 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	exec_path(t_data *data, char *argv[])
 	if (open(argv[0], O_RDONLY) > 0)
 		execve(argv[0], argv, NULL);
 	paths = ft_split(ft_getpath(data->envp), ':');
+	if (!paths)
+		return ;
 	i = -1;
 	while (paths[++i])
 	{
