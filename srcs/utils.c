@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:25:10 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 15:50:37 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:52:42 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_getpath(char **envp)
 	i = -1;
 	while (envp[++i])
 	{
-		if (strncmp("PATH=", envp[i], 5) == 0)
+		if (ft_strncmp("PATH=", envp[i], 5) == 0)
 			return (&envp[i][5]);
 	}
 	return (NULL);
