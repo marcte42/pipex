@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 12:27:18 by pravry            #+#    #+#             */
-/*   Updated: 2021/12/19 23:13:22 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:49:52 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_data
 	char	**envp;
 }				t_data;
 
+char	*ft_getpath(char **envp);
 int		init_data(t_data *data, char *argv[], char *envp[]);
 void	free_data(t_data *data);
 void	free_split(char **split);

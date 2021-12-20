@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 14:14:18 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:50:17 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	exec_path(t_data *data, char *argv[])
 	(void) data;
 	if (open(argv[0], O_RDONLY) > 0)
 		execve(argv[0], argv, NULL);
-	paths = ft_split(getenv("PATH"), ':');
+	paths = ft_split(ft_getpath(data->envp), ':');
 	i = -1;
 	while (paths[++i])
 	{
@@ -103,14 +103,18 @@ int	execute(t_data *data)
 	int	pid[2];
 	int	status[2];
 
+	pid[0] = 0;
+	pid[1] = 0;
 	if (pipe(pipefd) == -1)
 		return (errno);
 	status[0] = exec_left(data, pid, pipefd);
 	status[1] = exec_right(data, pid, pipefd);
 	close(pipefd[0]);
 	close(pipefd[1]);
-	waitpid(pid[0], &status[0], 0);
-	waitpid(pid[1], &status[1], 0);
+	if (pid[0])
+		waitpid(pid[0], &status[0], 0);
+	if (pid[1])
+		waitpid(pid[1], &status[1], 0);
 	return (status[1]);
 }
 
