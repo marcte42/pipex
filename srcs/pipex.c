@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 09:50:18 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 16:34:26 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2021/12/21 20:54:20 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	exec_left(t_data *data, int *pid, int *pipefd)
 		perror(data->in);
 		return (1);
 	}
-	if (!valid_cmd(data, data->cmds[0][0]))
+	if (!data->cmds[0][0] || !valid_cmd(data, data->cmds[0][0]))
 	{
 		ft_putstr(data->cmds[0][0]);
 		ft_putstr(": command not found\n");
@@ -80,7 +80,7 @@ int	exec_right(t_data *data, int *pid, int *pipefd)
 		perror(data->out);
 		return (1);
 	}
-	if (!valid_cmd(data, data->cmds[1][0]))
+	if (!data->cmds[1][0] || !valid_cmd(data, data->cmds[1][0]))
 	{
 		ft_putstr(data->cmds[1][0]);
 		ft_putstr(" : command not found\n");
