@@ -6,14 +6,14 @@
 #    By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/17 10:25:07 by mterkhoy          #+#    #+#              #
-#    Updated: 2021/12/19 19:31:44 by mterkhoy         ###   ########.fr        #
+#    Updated: 2022/02/26 14:55:10 by mterkhoy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 CC 	= gcc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 INC_DIR = ./includes
 LIB_DIR = ./libft
