@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:25:10 by mterkhoy          #+#    #+#             */
-/*   Updated: 2022/02/26 14:51:42 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2022/02/26 15:19:36 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*ft_getpath(char **envp)
 		if (ft_strncmp("PATH=", envp[i], 5) == 0)
 			return (&envp[i][5]);
 	}
-	return (ft_strdup(""));
+	return (&envp[0][0]);
 }
 
 void	free_split(char **split)
