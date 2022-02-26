@@ -6,7 +6,7 @@
 /*   By: mterkhoy <mterkhoy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 19:25:10 by mterkhoy          #+#    #+#             */
-/*   Updated: 2021/12/20 15:52:42 by mterkhoy         ###   ########.fr       */
+/*   Updated: 2022/02/26 14:42:43 by mterkhoy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	init_data(t_data *data, char *argv[], char *envp[])
 	data->envp = envp;
 	data->in = argv[1];
 	data->out = argv[4];
-	data->cmds = calloc(3, sizeof(char *));
+	data->cmds = ft_calloc(3, sizeof(char *));
 	data->cmds[0] = ft_split(argv[2], ' ');
 	data->cmds[1] = ft_split(argv[3], ' ');
 	data->cmds[2] = NULL;
